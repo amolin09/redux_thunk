@@ -9,13 +9,39 @@ import {
     Container 
 } from '@mui/material';
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import { MoreVert } from '@material-ui/icons'
+import { MoreVert as MoreVertIcon } from '@material-ui/icons'
 
 const Import = (props) => {
-    // fill out this component
+const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDelete = () => {
+    props.deleteMake(anchorEl.getAttribute("makeid"));
+    handleClose();
+  };
+
 
     return (
+        <>
+         <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+      </Menu>
         <Container>
             <h2>Count: {props.makes.length}</h2>
             <Button variant="contained" color="primary" onClick={props.fetchMakes}>Import</Button>
@@ -27,20 +53,27 @@ const Import = (props) => {
                     <TableCell>Vehicle Type</TableCell>
                     <TableCell>Actions</TableCell>
                 </TableHead>
-                <TableBody>
-                    {props.makes.map((make, idx) => (
-                        <TableRow key={make.MakeId}>
-                            <TableCell>{make.MakeId}</TableCell>
-                            <TableCell>{make.MakeName}</TableCell>
-                            <TableCell>{make.VehicleTypeName}</TableCell>
-                            <DeleteIcon color="secondary"
-                            onClick={() => props.removeMake(idx)}
-                            />
-                        </TableRow>
-                    ))}
-                </TableBody>
+                  <TableBody>
+              {props.makes.map((make) => (
+                <TableRow
+                  key={make.MakeId}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {make.MakeId}
+                  </TableCell>
+                  <TableCell>{make.MakeName}</TableCell>
+                  <TableCell align="right">
+                    <IconButton makeid={make.MakeId} onClick={handleClick}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
             </Table>
         </Container>
+        </>
     )
 }
 
